@@ -112,6 +112,8 @@ public:
 	void SetPlantActor(APlantActor* PlantBeingOverlapped);
 	void SetViewedActor(AActor* ActorIn);
 	UInventoryComp* GetInventoryComp() const { return InventoryComp; }
+
+	void SetCanMove(const bool CanMove);
 private:
 	UPROPERTY(Replicated)
 	APlantActor* OverlappingPlant;
@@ -136,5 +138,7 @@ private:
 
 	void TryToInteract();
 	void DealWithHeldAltInteract(float DeltaTime);
+
+	bool bCanMove;
 };
 

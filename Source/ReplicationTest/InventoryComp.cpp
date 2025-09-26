@@ -49,15 +49,7 @@ void UInventoryComp::TickComponent(float DeltaTime, enum ELevelTick TickType, FA
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 	TraceForInteractive();
-
-	if (ActorBeenHit)
-	{
-		GEngine->AddOnScreenDebugMessage(1, 0.f, FColor::Red, *ActorBeenHit->GetName());
-	}
-	else
-	{
-		GEngine->AddOnScreenDebugMessage(1, 0.f, FColor::Red, FString("ActorBeenHit is not valid."));
-	}
+	
 }
 
 bool UInventoryComp::AddToInventory(FName ItemIDIn, int32 QuantityIn)

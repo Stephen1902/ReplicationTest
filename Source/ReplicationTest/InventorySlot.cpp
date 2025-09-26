@@ -12,9 +12,14 @@ void UInventorySlot::SetInventoryInfo(UDataTable* DataTable, UInventoryComp* Inv
 	InventoryComp = InventoryCompIn;
 	DataTableRowHandle.DataTable = DataTable;
 
-	if (!InventoryComp || DataTable)
+	if (!InventoryComp)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("SetInventoryInfo was called in InventorySlot but without a valid Inventory Comp or Data Table"));
+		UE_LOG(LogTemp, Warning, TEXT("SetInventoryInfo was called in InventorySlot but without a valid Inventory Comp"));
+	}
+
+	if (!DataTable)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("SetInventoryInfo was called in InventorySlot but without a valid Data Table"));
 	}
 }
 

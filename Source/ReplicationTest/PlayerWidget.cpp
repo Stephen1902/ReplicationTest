@@ -2,8 +2,9 @@
 
 #include "PlayerWidget.h"
 #include "InventoryGrid.h"
+#include "Components/TextBlock.h"
 
-void UPlayerWidget::SetInventoryInto(class UDataTable* DataTableIn, class UInventoryComp* InventoryCompIn)
+void UPlayerWidget::SetInventoryInfo(UDataTable* DataTableIn, UInventoryComp* InventoryCompIn)
 {
 	if (DataTableIn && InventoryCompIn)
 	{
@@ -21,4 +22,9 @@ void UPlayerWidget::SetInventoryVisibility(bool InventoryIsVisible)
 	{
 		InventoryGrid->SetVisibility(ESlateVisibility::Hidden);
 	}
+}
+
+void UPlayerWidget::SetTextBlock(const FText& TextIn) const
+{
+	InfoTextBlock->SetText(TextIn);
 }

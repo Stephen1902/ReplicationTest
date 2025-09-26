@@ -18,8 +18,12 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Player Widget", meta=(BindWidget))
 	class UInventoryGrid* InventoryGrid;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Player Widget", meta=(BindWidget))
+	class UTextBlock* InfoTextBlock;
 public:
-	void SetInventoryInto(class UDataTable* DataTableIn, class UInventoryComp* InventoryCompIn);
+	void SetInventoryInfo(class UDataTable* DataTableIn, class UInventoryComp* InventoryCompIn);
 
 	void SetInventoryVisibility(bool InventoryIsVisible);
+
+	void SetTextBlock(const FText& TextIn) const;
 };

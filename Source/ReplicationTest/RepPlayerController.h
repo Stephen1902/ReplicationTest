@@ -33,6 +33,12 @@ public:
 	void DealWithChestWidgetClosed(const FText& TextIn);
 	
 private:
+
+	UFUNCTION()
+	void Turn(float Val);
+	UFUNCTION()
+	void LookUp(float Val);
+	
 	// Has to be a replicated variable to call the function as a valid "server" actor
 	UPROPERTY(Replicated)
 	AWriteableChestActor* ChestActorRef;
@@ -40,6 +46,9 @@ private:
 	UFUNCTION(Server, Reliable)
 	void Server_DealWithWriteableChest(AWriteableChestActor* ChestIn);
 
+	UPROPERTY()
+	class AReplicationTestCharacter* OwningPlayer;
+	
 	UPROPERTY()
 	UPlayerWidget* PlayerWidgetRef;
 	
@@ -49,6 +58,16 @@ private:
 	UFUNCTION(Server, Reliable)
 	void Server_DealWithChestWidgetClosed(const FText& TextIn);
 
+	UFUNCTION(Server, Reliable)
+	void Server_AddWidget();
+
+	UFUNCTION(Client, Reliable)
+	void Client_AddWidget();
+
+	UPROPERTY()
+	class UDataTable* GameDataTable;
+	
 	void ToggleInventory();
 	bool bInventoryOnScreen;
+	bool bCanLook;
 };
