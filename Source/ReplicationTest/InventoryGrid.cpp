@@ -18,13 +18,13 @@ void UInventoryGrid::SetInventoryInfo(UInventoryComp* InventoryCompIn, UDataTabl
 	if (InventorySlotToUse && InventoryComp)
 	{
 		TArray<FItemStruct> ItemArray = InventoryComp->GetInventory();
-		for (FItemStruct It : ItemArray)
+		for (int32 i = 0;  i < ItemArray.Num(); ++i)
 		{
 			UInventorySlot* NewWidget = CreateWidget<UInventorySlot>(GetWorld(), InventorySlotToUse);
 			InvGrid_WrapBox->AddChild(NewWidget);
 
 			NewWidget->SetInventoryInfo(DataTableIn, InventoryComp);
-			NewWidget->SetItemInfo(It.ItemID, It.Quantity);
+			NewWidget->SetItemInfo(ItemArray[i].ItemID, ItemArray[i].Quantity, i);
 		}
 	}
 	else

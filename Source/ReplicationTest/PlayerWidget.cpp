@@ -9,6 +9,11 @@ void UPlayerWidget::SetInventoryInfo(UDataTable* DataTableIn, UInventoryComp* In
 	if (DataTableIn && InventoryCompIn)
 	{
 		InventoryGrid->SetInventoryInfo(InventoryCompIn, DataTableIn);
+		UE_LOG(LogTemp, Warning, TEXT("SetInventoryInfo called on PlayerWidget"))
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("SetInventoryInfo called on PlayerWidget.  DT or IC."))
 	}
 }
 

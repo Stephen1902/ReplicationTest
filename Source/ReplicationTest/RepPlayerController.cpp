@@ -148,12 +148,6 @@ void ARepPlayerController::Client_AddWidget_Implementation()
 			PlayerWidgetRef->AddToViewport();
 
 			OwningPlayer = Cast<AReplicationTestCharacter>(GetCharacter());
-
-			if (OwningPlayer)
-			{
-				UInventoryComp* PlayerInventoryComp = OwningPlayer->GetInventoryComp();
-				PlayerWidgetRef->SetInventoryInfo(GameDataTable, PlayerInventoryComp);
-			}
 		}
 		else
 		{
@@ -178,6 +172,12 @@ void ARepPlayerController::ToggleInventory()
 		SetShowMouseCursor(bInventoryOnScreen);
 		OwningPlayer->SetCanMove(!bInventoryOnScreen);
 		bCanLook = !bInventoryOnScreen;
+
+		// Update the inventory component on screen
+		if (bInventoryOnScreen && GameDataTable && OwningPlayer)
+		{
+			PlayerWidgetRef->SetInventoryInfo(GameDataTable, OwningPlayer->GetInventoryComp());
+		}
 	}
 }
 

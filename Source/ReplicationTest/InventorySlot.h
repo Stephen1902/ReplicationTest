@@ -53,20 +53,29 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Inventory Slot", meta=(BindWidget))
 	UTextBlock* InvSlot_QtyTextBlock;
 
-	UPROPERTY(VisibleAnywhere, Category = "Inventory Slot")
-	FText ItemID;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Inventory Slot")
+	TSubclassOf<class UDragDropWidget> DragDropWidget;
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Inventory Slot")
+	FName ItemID;
 
-	UPROPERTY(VisibleAnywhere, Category = "Inventory Slot")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Inventory Slot")
 	int32 Quantity;
 
-	UPROPERTY(VisibleAnywhere, Category = "Inventory Slot")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Inventory Slot")
+	int32 ItemIndex;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Inventory Slot")
 	class UInventoryComp* InventoryComp;
 
 public:
 	void SetInventoryInfo(UDataTable* DataTable, UInventoryComp* InventoryCompIn);
-	void SetItemInfo(FName ItemIDIn, int32 QuantityIn);
+	void SetItemInfo(FName ItemIDIn, int32 QuantityIn, int32 IndexIn);
 
 private:
 	UPROPERTY()
 	FDataTableRowHandle DataTableRowHandle;
+
+	virtual FReply NativeOnPreviewMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
+	virtual void NativeOnDragDetected( const FGeometry& InGeometry, const FPointerEvent& InMouseEvent, UDragDropOperation*& OutOperation ) override;
 };
