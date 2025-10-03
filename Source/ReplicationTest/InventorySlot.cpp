@@ -12,19 +12,13 @@
 #include "Components/TextBlock.h"
 #include "Kismet/KismetInputLibrary.h"
 
-void UInventorySlot::SetInventoryInfo(const UDataTable* DataTable, UInventoryComp* InventoryCompIn)
+void UInventorySlot::SetInventoryInfo(UInventoryComp* InventoryCompIn)
 {
-	InventoryComp = InventoryCompIn;
-	DataTableRowHandle.DataTable = DataTable;
-
 	if (!InventoryComp)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("SetInventoryInfo was called in InventorySlot but without a valid Inventory Comp"));
-	}
-
-	if (!DataTable)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("SetInventoryInfo was called in InventorySlot but without a valid Data Table"));
+		UE_LOG(LogTemp, Warning, TEXT("SetInventoryInfo was called in InventorySlot but without a valid Inventory Comp"))
+		InventoryComp = InventoryCompIn;
+		DataTableRowHandle.DataTable = InventoryComp->GetDataTable();
 	}
 }
 

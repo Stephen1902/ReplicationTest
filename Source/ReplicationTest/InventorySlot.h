@@ -69,7 +69,7 @@ protected:
 	class UInventoryComp* InventoryComp;
 
 public:
-	void SetInventoryInfo(const UDataTable* DataTable, UInventoryComp* InventoryCompIn);
+	void SetInventoryInfo(UInventoryComp* InventoryCompIn);
 	void SetItemInfo(FName ItemIDIn, int32 QuantityIn, int32 IndexIn);
 
 private:

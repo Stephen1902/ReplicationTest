@@ -4,12 +4,11 @@
 #include "InventoryGrid.h"
 #include "Components/TextBlock.h"
 
-void UPlayerWidget::SetInventoryInfo(UDataTable* DataTableIn, UInventoryComp* InventoryCompIn)
+void UPlayerWidget::SetInventoryInfo(UInventoryComp* InventoryCompIn)
 {
-	if (DataTableIn && InventoryCompIn)
+	if (InventoryCompIn)
 	{
-		InventoryGrid->SetInventoryInfo(InventoryCompIn, DataTableIn);
-		UE_LOG(LogTemp, Warning, TEXT("SetInventoryInfo called on PlayerWidget"))
+		InventoryGrid->SetInventoryInfo(InventoryCompIn);
 	}
 	else
 	{

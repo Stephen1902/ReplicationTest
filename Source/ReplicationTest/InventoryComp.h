@@ -57,6 +57,8 @@ public:
 	bool AddToInventory(FName ItemIDIn, int32 QuantityIn);
 	void RemoveFromInventory();
 
+	void SetArraySize(const int32 NumElements);
+	
 	void DealWithInteract(AReplicationTestCharacter* CharacterInteracting);
 
 	void SetItemArray(FItemStruct ItemStruct, int32 ItemIndex);
@@ -67,6 +69,8 @@ public:
 
 	UPROPERTY()
 	FOnInventoryUpdated OnInventoryUpdated;
+
+	const UDataTable* GetDataTable() const { return DataTableRowHandle.DataTable; }
 private:
 	void TraceForInteractive();
 

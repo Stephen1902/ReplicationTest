@@ -63,9 +63,6 @@ private:
 
 	UFUNCTION(Client, Reliable)
 	void Client_AddWidget();
-
-	UPROPERTY()
-	class UDataTable* GameDataTable;
 	
 	void ToggleInventory();
 	bool bInventoryOnScreen;

@@ -24,12 +24,6 @@ ARepPlayerController::ARepPlayerController()
 		PlayerWidget = Widget.Class;
 	}
 
-	static ConstructorHelpers::FObjectFinder<UDataTable> DT(TEXT("/Game/WorldItems/DT_WorldItems"));
-	if (DT.Succeeded())
-	{
-		GameDataTable = DT.Object;
-	}
-
 	OwningPlayer = nullptr;
 	bCanLook = true;
 }
@@ -174,9 +168,9 @@ void ARepPlayerController::ToggleInventory()
 		bCanLook = !bInventoryOnScreen;
 
 		// Update the inventory component on screen
-		if (bInventoryOnScreen && GameDataTable && OwningPlayer)
+		if (bInventoryOnScreen && OwningPlayer)
 		{
-			PlayerWidgetRef->SetInventoryInfo(GameDataTable, OwningPlayer->GetInventoryComp());
+			PlayerWidgetRef->SetInventoryInfo(OwningPlayer->GetInventoryComp());
 		}
 	}
 }

@@ -21,7 +21,7 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Player Widget", meta=(BindWidget))
 	class UTextBlock* InfoTextBlock;
 public:
-	void SetInventoryInfo(class UDataTable* DataTableIn, class UInventoryComp* InventoryCompIn);
+	void SetInventoryInfo(class UInventoryComp* InventoryCompIn);
 
 	void SetInventoryVisibility(bool InventoryIsVisible);
 

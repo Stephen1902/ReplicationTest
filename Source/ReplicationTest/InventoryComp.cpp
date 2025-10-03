@@ -108,6 +108,11 @@ void UInventoryComp::RemoveFromInventory()
 
 }
 
+void UInventoryComp::SetArraySize(const int32 NumElements)
+{
+	InventorySize = NumElements;
+}
+
 void UInventoryComp::DealWithInteract(AReplicationTestCharacter* CharacterInteracting)
 {
 	if (ActorBeenHit && CharacterInteracting)
@@ -230,6 +235,11 @@ void UInventoryComp::Server_DealWithInteract_Implementation(AActor* ActorToInter
 		if (UItemComponent* ItemComponent = Cast<UItemComponent>(ActorToInteractWith->GetComponentByClass(UItemComponent::StaticClass())))
 		{
 			Execute_OnActorInteracted(ItemComponent, CharacterInteracting);
+		}
+		else
+		{
+			// It doesn't have an item component so is probably a chest.
+			
 		}
 	}
 }

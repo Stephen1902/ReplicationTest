@@ -7,10 +7,10 @@
 
 void UInventoryGrid::Client_InventoryUpdated_Implementation()
 {
-	SetInventoryInfo(InventoryComp, DataTableHandle.DataTable);
+	SetInventoryInfo(InventoryComp);
 }
 
-void UInventoryGrid::SetInventoryInfo(UInventoryComp* InventoryCompIn, const UDataTable* DataTableIn)
+void UInventoryGrid::SetInventoryInfo(UInventoryComp* InventoryCompIn)
 {
 	// Empty the wrap box to start fresh
 	InvGrid_WrapBox->ClearChildren();
@@ -20,14 +20,11 @@ void UInventoryGrid::SetInventoryInfo(UInventoryComp* InventoryCompIn, const UDa
     	InventoryComp = InventoryCompIn;
 		// Set up the binding for when the inventory is updated
 		InventoryComp->OnInventoryUpdated.AddDynamic(this, &UInventoryGrid::Client_InventoryUpdated);
+
+       	DataTableHandle.DataTable = InventoryComp->GetDataTable();
     }
 
-	if (DataTableHandle.IsNull())
-	{
-		DataTableHandle.DataTable = DataTableIn;
-	}
-	
-	if (InventorySlotToUse && InventoryComp)
+	if (InventorySlotToUse && InventoryComp && DataTableHandle.DataTable)
 	{
 		TArray<FItemStruct> ItemArray = InventoryComp->GetInventory();
 		for (int32 i = 0;  i < ItemArray.Num(); ++i)

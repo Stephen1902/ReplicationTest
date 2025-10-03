@@ -45,5 +45,5 @@ private:
 	void Client_InventoryUpdated();
 
 public:
-	void SetInventoryInfo(UInventoryComp* InventoryCompIn, const UDataTable* DataTableIn);
+	void SetInventoryInfo(UInventoryComp* InventoryCompIn);
 };
