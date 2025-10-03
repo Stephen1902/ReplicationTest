@@ -19,6 +19,8 @@ class REPLICATIONTEST_API UDD_Operation : public UDragDropOperation
 public:
 	void SetItemInfo(UInventoryComp* InventoryCompIn, const int32 ItemIndexIn);
 
+	UInventoryComp* GetInventoryComp() const { return InventoryComp; }
+	int32 GetItemIndex() const { return ItemIndex; }
 private:
 	UPROPERTY()
 	UInventoryComp* InventoryComp;

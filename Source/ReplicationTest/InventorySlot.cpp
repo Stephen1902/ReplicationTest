@@ -12,7 +12,7 @@
 #include "Components/TextBlock.h"
 #include "Kismet/KismetInputLibrary.h"
 
-void UInventorySlot::SetInventoryInfo(UDataTable* DataTable, UInventoryComp* InventoryCompIn)
+void UInventorySlot::SetInventoryInfo(const UDataTable* DataTable, UInventoryComp* InventoryCompIn)
 {
 	InventoryComp = InventoryCompIn;
 	DataTableRowHandle.DataTable = DataTable;
@@ -47,8 +47,6 @@ void UInventorySlot::SetItemInfo(FName ItemIDIn, int32 QuantityIn, int32 IndexIn
 			
 			InvSlot_Image->SetVisibility(ESlateVisibility::Visible);
 			InvSlot_QtySizeBox->SetVisibility(ESlateVisibility::Visible);
-
-			UE_LOG(LogTemp, Warning, TEXT("Item is valid and set to %s"), *Row->ItemName.ToString())
 		}
 	}
 }
@@ -81,3 +79,22 @@ void UInventorySlot::NativeOnDragDetected(const FGeometry& InGeometry, const FPo
 		OutOperation = NewDragDropOperation;
 	}
 }
+
+bool UInventorySlot::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)
+{
+	Super::NativeOnDrop(InGeometry, InDragDropEvent, InOperation);
+
+	const UDD_Operation* LocalOperation = Cast<UDD_Operation>(InOperation);
+	if (LocalOperation)
+	{
+		// Check that the indexes are different or the inventory components are different
+		if (LocalOperation->GetItemIndex() != ItemIndex || LocalOperation->GetInventoryComp() != InventoryComp)
+		{
+			InventoryComp->Server_TransferSlot_Implementation(LocalOperation->GetItemIndex(), LocalOperation->GetInventoryComp(), ItemIndex);
+			return true;
+		}
+	}
+
+	return false;
+}
+

@@ -148,6 +148,16 @@ void UInventoryComp::TraceForInteractive()
 	}
 }
 
+void UInventoryComp::UpdateInventory_Implementation()
+{
+	OnInventoryUpdated.Broadcast();
+}
+
+void UInventoryComp::Server_TransferSlot_Implementation(int32 SourceIndex, UInventoryComp* SourceInventory, int32 DestinationIndex)
+{
+	TransferSlots(SourceIndex, SourceInventory, DestinationIndex);
+}
+
 bool UInventoryComp::FindSlot(FName ItemID, int32& FoundSlot)
 {
 	for (int32 i = 0; i < InventoryContent.Num(); ++i)
@@ -223,6 +233,47 @@ void UInventoryComp::Server_DealWithInteract_Implementation(AActor* ActorToInter
 		}
 	}
 }
+
+
+void UInventoryComp::TransferSlots(int32 SourceIndex, UInventoryComp* SourceInventory, int32 DestinationIndex)
+{
+	if (SourceInventory)
+	{
+		TArray<FItemStruct> SInventoryContents = SourceInventory->GetInventory();
+		FItemStruct CurrentItem = SInventoryContents[SourceIndex];
+
+		// Check if the destination index is valid.
+		if (DestinationIndex < 0)
+		{
+			
+		}
+		else
+		{
+			// Check if the current item is the same as the destination item
+			if (CurrentItem.ItemID == InventoryContent[DestinationIndex].ItemID)
+			{
+				
+			}
+			else
+			{
+				// They are different, swap them
+				SourceInventory->SetItemArray(InventoryContent[DestinationIndex], SourceIndex);
+				InventoryContent[DestinationIndex] = CurrentItem;
+				// Update the inventory on screen
+				UpdateInventory();
+			}
+		}
+	}
+}
+
+
+void UInventoryComp::SetItemArray(FItemStruct ItemStruct, int32 ItemIndex)
+{
+	InventoryContent[ItemIndex] = ItemStruct;
+	// Update the inventory on screen
+	UpdateInventory();
+}
+
 
 void UInventoryComp::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {

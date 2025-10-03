@@ -69,7 +69,7 @@ protected:
 	class UInventoryComp* InventoryComp;
 
 public:
-	void SetInventoryInfo(UDataTable* DataTable, UInventoryComp* InventoryCompIn);
+	void SetInventoryInfo(const UDataTable* DataTable, UInventoryComp* InventoryCompIn);
 	void SetItemInfo(FName ItemIDIn, int32 QuantityIn, int32 IndexIn);
 
 private:
@@ -78,4 +78,5 @@ private:
 
 	virtual FReply NativeOnPreviewMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
 	virtual void NativeOnDragDetected( const FGeometry& InGeometry, const FPointerEvent& InMouseEvent, UDragDropOperation*& OutOperation ) override;
+	virtual bool NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation) override;
 };

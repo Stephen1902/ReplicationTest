@@ -5,7 +5,12 @@
 #include "InventorySlot.h"
 #include "Components/WrapBox.h"
 
-void UInventoryGrid::SetInventoryInfo(UInventoryComp* InventoryCompIn, UDataTable* DataTableIn)
+void UInventoryGrid::Client_InventoryUpdated_Implementation()
+{
+	SetInventoryInfo(InventoryComp, DataTableHandle.DataTable);
+}
+
+void UInventoryGrid::SetInventoryInfo(UInventoryComp* InventoryCompIn, const UDataTable* DataTableIn)
 {
 	// Empty the wrap box to start fresh
 	InvGrid_WrapBox->ClearChildren();
@@ -13,7 +18,14 @@ void UInventoryGrid::SetInventoryInfo(UInventoryComp* InventoryCompIn, UDataTabl
 	if (!InventoryComp)
 	{
     	InventoryComp = InventoryCompIn;
+		// Set up the binding for when the inventory is updated
+		InventoryComp->OnInventoryUpdated.AddDynamic(this, &UInventoryGrid::Client_InventoryUpdated);
     }
+
+	if (DataTableHandle.IsNull())
+	{
+		DataTableHandle.DataTable = DataTableIn;
+	}
 	
 	if (InventorySlotToUse && InventoryComp)
 	{
@@ -23,7 +35,7 @@ void UInventoryGrid::SetInventoryInfo(UInventoryComp* InventoryCompIn, UDataTabl
 			UInventorySlot* NewWidget = CreateWidget<UInventorySlot>(GetWorld(), InventorySlotToUse);
 			InvGrid_WrapBox->AddChild(NewWidget);
 
-			NewWidget->SetInventoryInfo(DataTableIn, InventoryComp);
+			NewWidget->SetInventoryInfo(DataTableHandle.DataTable, InventoryComp);
 			NewWidget->SetItemInfo(ItemArray[i].ItemID, ItemArray[i].Quantity, i);
 		}
 	}

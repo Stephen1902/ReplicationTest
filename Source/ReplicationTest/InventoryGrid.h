@@ -38,6 +38,12 @@ private:
 	UPROPERTY()
 	UInventoryComp* InventoryComp;
 
+	UPROPERTY()
+	FDataTableRowHandle DataTableHandle;
+
+	UFUNCTION(Client, Unreliable)
+	void Client_InventoryUpdated();
+
 public:
-	void SetInventoryInfo(UInventoryComp* InventoryCompIn, UDataTable* DataTableIn);
+	void SetInventoryInfo(UInventoryComp* InventoryCompIn, const UDataTable* DataTableIn);
 };

@@ -8,6 +8,8 @@
 #include "Engine/DataTable.h"
 #include "InventoryComp.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnInventoryUpdated);
+
 #define COLLISION_INTERACTIVE	ECC_GameTraceChannel2
 
 USTRUCT(BlueprintType)
@@ -50,13 +52,21 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Item Data")
 	FDataTableRowHandle DataTableRowHandle;
+
 public:
 	bool AddToInventory(FName ItemIDIn, int32 QuantityIn);
 	void RemoveFromInventory();
 
 	void DealWithInteract(AReplicationTestCharacter* CharacterInteracting);
 
+	void SetItemArray(FItemStruct ItemStruct, int32 ItemIndex);
 	TArray<FItemStruct> GetInventory() const { return InventoryContent; }
+
+	UFUNCTION(NetMulticast, Reliable)
+	void UpdateInventory();
+
+	UPROPERTY()
+	FOnInventoryUpdated OnInventoryUpdated;
 private:
 	void TraceForInteractive();
 
@@ -66,9 +76,14 @@ private:
 	UFUNCTION(Server, Reliable)
 	void Server_DealWithInteract(AActor* ActorToInteractWith, AReplicationTestCharacter* CharacterInteracting);
 
+	UFUNCTION(Server, Reliable)
+	void Server_TransferSlot(int32 SourceIndex, UInventoryComp* SourceInventory, int32 DestinationIndex);
+
 	bool FindSlot(FName ItemID, int32& FoundSlot);
 	int32 GetMaxStackSize(FName ItemID);
 	void AddToStack(const int32 SlotIndex, const int32 QuantityToAdd);
 	bool HasEmptySlot(int32& EmptySlot);
 	bool CreateNewStack(FName ItemID, int32 Quantity);
+
+	void TransferSlots(int32 SourceIndex, UInventoryComp* SourceInventory, int32 DestinationIndex);
 };
