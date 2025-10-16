@@ -29,5 +29,8 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category="Interact|ToInteract")
 	void OnActorViewLost();
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category="Interact|ToInteract")
-	void OnActorInteracted(AReplicationTestCharacter* PlayerWhoInteracted);	
+	void OnActorInteracted(AReplicationTestCharacter* PlayerWhoInteracted);
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category="Interact|ToInteract")
+	TSubclassOf<UUserWidget> GetChestWidget();
+	
 };

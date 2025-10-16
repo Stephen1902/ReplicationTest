@@ -14,11 +14,14 @@
 
 void UInventorySlot::SetInventoryInfo(UInventoryComp* InventoryCompIn)
 {
-	if (!InventoryComp)
+	if (InventoryCompIn)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("SetInventoryInfo was called in InventorySlot but without a valid Inventory Comp"))
 		InventoryComp = InventoryCompIn;
 		DataTableRowHandle.DataTable = InventoryComp->GetDataTable();
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("SetInventoryInfo was called in InventorySlot but without a valid Inventory Comp"))
 	}
 }
 
@@ -33,7 +36,6 @@ void UInventorySlot::SetItemInfo(FName ItemIDIn, int32 QuantityIn, int32 IndexIn
 	
 	if (ItemID != "" && QuantityIn > 0 && !DataTableRowHandle.IsNull())
 	{
-		
 		if (const FWorldItemStruct* Row = DataTableRowHandle.DataTable->FindRow<FWorldItemStruct>(ItemID, ""))
 		{
 			InvSlot_Image->SetBrushFromTexture(Row->ItemIcon);

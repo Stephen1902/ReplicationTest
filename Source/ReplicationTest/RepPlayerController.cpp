@@ -8,7 +8,6 @@
 #include "Blueprint/UserWidget.h"
 #include "Net/UnrealNetwork.h"
 #include "Runtime/CoreUObject/Public/UObject/ConstructorHelpers.h"
-#include "Engine/DataTable.h"
 
 ARepPlayerController::ARepPlayerController()
 {
@@ -156,6 +155,9 @@ void ARepPlayerController::Client_AddWidget_Implementation()
 
 void ARepPlayerController::ToggleInventory()
 {
+	// TODO Check if another widget is on screen and remove it if there is
+
+	
 	// Only run this code if a valid PlayerWidget is on screen
 	if (PlayerWidgetRef)
 	{

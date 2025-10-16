@@ -31,7 +31,8 @@ protected:
 public:
 	void DealWithWriteableChest(AWriteableChestActor* ChestIn, TSubclassOf<UWriteableChestWidget> WidgetIn);
 	void DealWithChestWidgetClosed(const FText& TextIn);
-	
+
+	UPlayerWidget* GetPlayerWidget() const { return PlayerWidgetRef; }
 private:
 
 	UFUNCTION()

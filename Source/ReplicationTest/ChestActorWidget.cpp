@@ -11,13 +11,23 @@ void UChestActorWidget::NativePreConstruct()
 {
 	Super::NativePreConstruct();
 
+
+}
+
+void UChestActorWidget::SetItemInfo(UInventoryComp* PlayerInventoryIn, UInventoryComp* ChestInventoryIn)
+{
 	const ACharacter* PC = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
-	if (PC)
+    if (PC)
+    {
+    	UInventoryComp* InventoryComp = Cast<UInventoryComp>(PC->GetComponentByClass(UInventoryComp::StaticClass()));
+    	if (InventoryComp)
+    	{
+    		PlayerInventory->SetInventoryInfo(PlayerInventoryIn);
+    	}
+    }
+
+	if (ChestInventoryIn)
 	{
-		UInventoryComp* InventoryComp = Cast<UInventoryComp>(PC->GetComponentByClass(UInventoryComp::StaticClass()));
-		if (InventoryComp)
-		{
-			PlayerInventory->SetInventoryInfo(InventoryComp);
-		}
+		ChestInventory->SetInventoryInfo(ChestInventoryIn);
 	}
 }

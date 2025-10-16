@@ -7,6 +7,7 @@
 #include "ChestActorWidget.generated.h"
 
 class UInventoryGrid;
+class UInventoryComp;
 /**
  * 
  */
@@ -24,4 +25,7 @@ protected:
 
 private:
 	virtual void NativePreConstruct() override;
+
+public:
+	void SetItemInfo(UInventoryComp* PlayerInventoryIn, UInventoryComp* ChestInventoryIn);
 };

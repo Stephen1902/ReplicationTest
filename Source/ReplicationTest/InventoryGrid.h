@@ -41,6 +41,9 @@ private:
 	UPROPERTY()
 	FDataTableRowHandle DataTableHandle;
 
+	UFUNCTION(Server, Reliable)
+	void Server_SetInventoryInfo(UInventoryComp* InventoryCompToUse);
+	
 	UFUNCTION(Client, Unreliable)
 	void Client_InventoryUpdated();
 

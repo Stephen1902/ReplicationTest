@@ -25,5 +25,11 @@ public:
 
 	void SetInventoryVisibility(bool InventoryIsVisible);
 
+	void ShowContainer(TSubclassOf<UUserWidget> WidgetToShow, UInventoryComp* ContainerInventory, class AReplicationTestCharacter* Player);
+	
 	void SetTextBlock(const FText& TextIn) const;
+
+private:
+	UPROPERTY()
+	class UChestActorWidget* ChestWidgetRef;
 };

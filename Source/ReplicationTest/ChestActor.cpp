@@ -3,6 +3,8 @@
 
 #include "ChestActor.h"
 #include "InventoryComp.h"
+#include "PlayerWidget.h"
+#include "RepPlayerController.h"
 
 // Sets default values
 AChestActor::AChestActor()
@@ -25,4 +27,17 @@ void AChestActor::BeginPlay()
 {
 	Super::BeginPlay();
 	
+}
+
+void AChestActor::OnActorInteracted_Implementation(AReplicationTestCharacter* PlayerWhoInteracted)
+{
+	IInteractInterface::OnActorInteracted_Implementation(PlayerWhoInteracted);
+
+	if (PlayerWhoInteracted)
+	{
+		if (ARepPlayerController* PC = Cast<ARepPlayerController>(PlayerWhoInteracted->GetController()))
+		{
+			PC->GetPlayerWidget()->ShowContainer(WidgetToDisplay, InventoryComp, PlayerWhoInteracted);
+		}
+	}
 }

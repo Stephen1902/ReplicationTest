@@ -2,6 +2,7 @@
 
 #include "InventoryComp.h"
 #include "ItemComponent.h"
+#include "ReplicationTestCharacter.h"
 #include "WorldObjects.h"
 #include "Kismet/GameplayStatics.h"
 #include "Net/UnrealNetwork.h"
@@ -36,12 +37,13 @@ void UInventoryComp::BeginPlay()
 	}
 	SetIsReplicated(true);
 
+	
 	// Resize the array full of empty spaces
 	InventoryContent.SetNum(InventorySize);
-	for (int32 i = 0; i < InventoryContent.Num(); ++i)
+	/*for (int32 i = 0; i < InventoryContent.Num(); ++i)
 	{
 		InventoryContent[i].Quantity = 0;
-	}
+	}*/
 }
 
 void UInventoryComp::TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
@@ -229,7 +231,7 @@ bool UInventoryComp::CreateNewStack(FName ItemID, int32 Quantity)
 
 void UInventoryComp::Server_DealWithInteract_Implementation(AActor* ActorToInteractWith, AReplicationTestCharacter* CharacterInteracting)
 {
-	if (ActorToInteractWith)
+	if (ActorToInteractWith && CharacterInteracting)
 	{
 		// Check if the actor has an ItemComponent.  If it does, it's for pick up.  Deal with this.
 		if (UItemComponent* ItemComponent = Cast<UItemComponent>(ActorToInteractWith->GetComponentByClass(UItemComponent::StaticClass())))
@@ -239,7 +241,12 @@ void UInventoryComp::Server_DealWithInteract_Implementation(AActor* ActorToInter
 		else
 		{
 			// It doesn't have an item component so is probably a chest.
-			
+
+			// Only an owned object can be used with the inventory system.  Set the owner. 
+			ActorToInteractWith->SetOwner(CharacterInteracting->GetController());
+
+			// Only one player at a time should be able to interact.  Call the client only function.
+			OnLocalInteract(ActorToInteractWith, CharacterInteracting);
 		}
 	}
 }
@@ -274,6 +281,11 @@ void UInventoryComp::TransferSlots(int32 SourceIndex, UInventoryComp* SourceInve
 			}
 		}
 	}
+}
+
+void UInventoryComp::OnLocalInteract_Implementation(AActor* TargetActor, AReplicationTestCharacter* InteractingChar)
+{
+	Execute_OnActorInteracted(TargetActor, InteractingChar);
 }
 
 

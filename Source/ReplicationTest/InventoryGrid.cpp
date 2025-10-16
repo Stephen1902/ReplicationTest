@@ -4,10 +4,17 @@
 #include "InventoryComp.h"
 #include "InventorySlot.h"
 #include "Components/WrapBox.h"
+#include "Kismet/GameplayStatics.h"
 
 void UInventoryGrid::Client_InventoryUpdated_Implementation()
 {
 	SetInventoryInfo(InventoryComp);
+}
+
+void UInventoryGrid::Server_SetInventoryInfo_Implementation(UInventoryComp* InventoryCompToUse)
+{
+	
+	//SetInventoryInfo(InventoryCompToUse);
 }
 
 void UInventoryGrid::SetInventoryInfo(UInventoryComp* InventoryCompIn)
@@ -17,7 +24,8 @@ void UInventoryGrid::SetInventoryInfo(UInventoryComp* InventoryCompIn)
 
 	if (!InventoryComp)
 	{
-    	InventoryComp = InventoryCompIn;
+		InventoryComp = InventoryCompIn;
+		
 		// Set up the binding for when the inventory is updated
 		InventoryComp->OnInventoryUpdated.AddDynamic(this, &UInventoryGrid::Client_InventoryUpdated);
 
@@ -27,12 +35,13 @@ void UInventoryGrid::SetInventoryInfo(UInventoryComp* InventoryCompIn)
 	if (InventorySlotToUse && InventoryComp && DataTableHandle.DataTable)
 	{
 		TArray<FItemStruct> ItemArray = InventoryComp->GetInventory();
+		UE_LOG(LogTemp, Warning, TEXT("ItemArray length is %i"), ItemArray.Num())
 		for (int32 i = 0;  i < ItemArray.Num(); ++i)
 		{
-			UInventorySlot* NewWidget = CreateWidget<UInventorySlot>(GetWorld(), InventorySlotToUse);
+			UInventorySlot* NewWidget = CreateWidget<UInventorySlot>(UGameplayStatics::GetPlayerController(GetWorld(), 0), InventorySlotToUse);
 			InvGrid_WrapBox->AddChild(NewWidget);
 
-			NewWidget->SetInventoryInfo(DataTableHandle.DataTable, InventoryComp);
+			NewWidget->SetInventoryInfo(InventoryComp);
 			NewWidget->SetItemInfo(ItemArray[i].ItemID, ItemArray[i].Quantity, i);
 		}
 	}

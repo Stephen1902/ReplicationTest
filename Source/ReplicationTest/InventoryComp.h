@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "InteractInterface.h"
+#include "ReplicationTestCharacter.h"
 #include "Components/ActorComponent.h"
 #include "Engine/DataTable.h"
 #include "InventoryComp.generated.h"
@@ -17,10 +18,10 @@ struct FItemStruct
 {
 	GENERATED_BODY()
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FName ItemID;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int32 Quantity;
 };
 
@@ -41,13 +42,13 @@ protected:
 	virtual void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	// Default size for this inventory
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Inventory Component")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Inventory Component")
 	int32 InventorySize;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Inventory Component", Replicated)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Inventory Component", Replicated)
 	TArray<FItemStruct> InventoryContent;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Inventory Component")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Inventory Component")
 	float TraceDistance;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Item Data")
@@ -90,4 +91,7 @@ private:
 	bool CreateNewStack(FName ItemID, int32 Quantity);
 
 	void TransferSlots(int32 SourceIndex, UInventoryComp* SourceInventory, int32 DestinationIndex);
+
+	UFUNCTION(Client, Reliable)
+	void OnLocalInteract(AActor* TargetActor, AReplicationTestCharacter* InteractingChar);
 };
