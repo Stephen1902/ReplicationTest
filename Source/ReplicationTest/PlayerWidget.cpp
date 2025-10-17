@@ -39,7 +39,7 @@ void UPlayerWidget::SetInventoryVisibility(bool InventoryIsVisible)
 }
 
 void UPlayerWidget::ShowContainer(TSubclassOf<UUserWidget> WidgetToShow, UInventoryComp* ContainerInventory, AReplicationTestCharacter* Player)
-{
+{	
 	ChestWidgetRef = CreateWidget<UChestActorWidget>(UGameplayStatics::GetPlayerController(GetWorld(), 0), WidgetToShow);
 	ChestWidgetRef->AddToViewport();
 	ChestWidgetRef->SetItemInfo(Player->GetInventoryComp(), ContainerInventory);

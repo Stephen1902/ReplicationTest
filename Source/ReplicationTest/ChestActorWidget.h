@@ -8,6 +8,7 @@
 
 class UInventoryGrid;
 class UInventoryComp;
+class UButton;
 /**
  * 
  */
@@ -23,9 +24,13 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Chest Actor Widget", meta=(BindWidget))
 	UInventoryGrid* PlayerInventory;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Chest Actor Widget", meta=(BindWidget))
+	UButton* ExitButton;
+	
 private:
 	virtual void NativePreConstruct() override;
 
 public:
 	void SetItemInfo(UInventoryComp* PlayerInventoryIn, UInventoryComp* ChestInventoryIn);
+	void SetPlayerController(class ARepPlayerController* ControllerIn);
 };

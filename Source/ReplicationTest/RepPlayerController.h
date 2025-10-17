@@ -32,6 +32,10 @@ public:
 	void DealWithWriteableChest(AWriteableChestActor* ChestIn, TSubclassOf<UWriteableChestWidget> WidgetIn);
 	void DealWithChestWidgetClosed(const FText& TextIn);
 
+	void ShowContainer(TSubclassOf<UUserWidget> WidgetToShow, class UInventoryComp* ContainerInventory, class AReplicationTestCharacter* PlayerIn);
+	UFUNCTION()
+	void RemoveContainer();
+
 	UPlayerWidget* GetPlayerWidget() const { return PlayerWidgetRef; }
 private:
 
@@ -42,7 +46,7 @@ private:
 	
 	// Has to be a replicated variable to call the function as a valid "server" actor
 	UPROPERTY(Replicated)
-	AWriteableChestActor* ChestActorRef;
+	AWriteableChestActor* WriteableChestActorRef;
 
 	UFUNCTION(Server, Reliable)
 	void Server_DealWithWriteableChest(AWriteableChestActor* ChestIn);
@@ -52,6 +56,9 @@ private:
 	
 	UPROPERTY()
 	UPlayerWidget* PlayerWidgetRef;
+
+	UPROPERTY()
+	class UChestActorWidget* ChestWidgetRef;
 	
 	UPROPERTY()
 	UWriteableChestWidget* WriteableChestWidgetRef;
@@ -68,4 +75,6 @@ private:
 	void ToggleInventory();
 	bool bInventoryOnScreen;
 	bool bCanLook;
+
+	void DealWithEscapeButtonPress();
 };

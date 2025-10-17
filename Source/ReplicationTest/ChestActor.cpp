@@ -37,7 +37,9 @@ void AChestActor::OnActorInteracted_Implementation(AReplicationTestCharacter* Pl
 	{
 		if (ARepPlayerController* PC = Cast<ARepPlayerController>(PlayerWhoInteracted->GetController()))
 		{
-			PC->GetPlayerWidget()->ShowContainer(WidgetToDisplay, InventoryComp, PlayerWhoInteracted);
+			// The owner needs to be set to something in the world that can "use it".  Set the interacting player as the owner.
+			SetOwner(PlayerWhoInteracted);
+			PC->ShowContainer(WidgetToDisplay, InventoryComp, PlayerWhoInteracted);
 		}
 	}
 }

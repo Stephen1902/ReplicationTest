@@ -6,6 +6,8 @@
 #include "InventoryGrid.h"
 #include "GameFramework/Character.h"
 #include "Kismet/GameplayStatics.h"
+#include "RepPlayerController.h"
+#include "Components/Button.h"
 
 void UChestActorWidget::NativePreConstruct()
 {
@@ -29,5 +31,13 @@ void UChestActorWidget::SetItemInfo(UInventoryComp* PlayerInventoryIn, UInventor
 	if (ChestInventoryIn)
 	{
 		ChestInventory->SetInventoryInfo(ChestInventoryIn);
+	}
+}
+
+void UChestActorWidget::SetPlayerController(ARepPlayerController* ControllerIn)
+{
+	if (ControllerIn)
+	{
+		ExitButton->OnClicked.AddDynamic(ControllerIn, &ARepPlayerController::RemoveContainer);
 	}
 }

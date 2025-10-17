@@ -1,17 +1,20 @@
 // Copyright 2025 DME Games
 
 #include "RepPlayerController.h"
+
+#include "ChestActorWidget.h"
 #include "PlayerWidget.h"
 #include "ReplicationTestCharacter.h"
 #include "WriteableChestActor.h"
 #include "WriteableChestWidget.h"
 #include "Blueprint/UserWidget.h"
+#include "Kismet/GameplayStatics.h"
 #include "Net/UnrealNetwork.h"
 #include "Runtime/CoreUObject/Public/UObject/ConstructorHelpers.h"
 
 ARepPlayerController::ARepPlayerController()
 {
-	ChestActorRef = nullptr;
+	WriteableChestActorRef = nullptr;
 	PlayerWidgetRef = nullptr;
 	WriteableChestWidgetRef = nullptr;
 	
@@ -48,9 +51,12 @@ void ARepPlayerController::SetupInputComponent()
 
 	// Setup input bindings
 	InputComponent->BindAction("ToggleInventory", IE_Pressed, this, &ARepPlayerController::ToggleInventory);
+	InputComponent->BindAction("Escape", IE_Pressed, this, &ARepPlayerController::DealWithEscapeButtonPress);
 
 	InputComponent->BindAxis("Turn", this, &ARepPlayerController::Turn);
 	InputComponent->BindAxis("LookUp", this, &ARepPlayerController::LookUp);
+
+	
 }
 
 void ARepPlayerController::DealWithWriteableChest(AWriteableChestActor* ChestIn, TSubclassOf<UWriteableChestWidget> WidgetIn)
@@ -63,7 +69,7 @@ void ARepPlayerController::DealWithWriteableChest(AWriteableChestActor* ChestIn,
 		}
 		else
 		{
-			ChestActorRef = ChestIn;
+			WriteableChestActorRef = ChestIn;
 		}
 
 		WriteableChestWidgetRef = CreateWidget<UWriteableChestWidget>(this, WidgetIn);
@@ -90,9 +96,9 @@ void ARepPlayerController::DealWithChestWidgetClosed(const FText& TextIn)
 	}
 	else
 	{
-		if (ChestActorRef)
+		if (WriteableChestActorRef)
 		{
-			ChestActorRef->SetRenderText(TextIn);
+			WriteableChestActorRef->SetRenderText(TextIn);
 		}
 		else
 		{
@@ -155,8 +161,12 @@ void ARepPlayerController::Client_AddWidget_Implementation()
 
 void ARepPlayerController::ToggleInventory()
 {
-	// TODO Check if another widget is on screen and remove it if there is
-
+	// Check if another widget is on screen, remove it if it is.
+	if (ChestWidgetRef)
+	{
+		ChestWidgetRef->RemoveFromParent();
+		ChestWidgetRef = nullptr;
+	}
 	
 	// Only run this code if a valid PlayerWidget is on screen
 	if (PlayerWidgetRef)
@@ -177,9 +187,64 @@ void ARepPlayerController::ToggleInventory()
 	}
 }
 
+void ARepPlayerController::DealWithEscapeButtonPress()
+{
+	// Check if there is a widget on screen.  Remove it if there is.
+	if (ChestWidgetRef || bInventoryOnScreen)
+	{
+		if (ChestWidgetRef)
+		{
+			RemoveContainer();
+		}
+		else
+		{
+			ToggleInventory();
+		}
+	}
+	else
+	{
+		// There is nothing on screen, close the game
+		// TODO set up proper quit menu
+		UKismetSystemLibrary::QuitGame(GetWorld(), this, EQuitPreference::Quit, true);
+	}
+}
+
+void ARepPlayerController::ShowContainer(TSubclassOf<UUserWidget> WidgetToShow, UInventoryComp* ContainerInventory, AReplicationTestCharacter* PlayerIn)
+{
+	// Check if the player widget is on screen.  Remove it if it is.
+	if (bInventoryOnScreen)
+	{
+		ToggleInventory();
+	}
+	
+	SetShowMouseCursor(true);
+	OwningPlayer->SetCanMove(false);
+	bCanLook = false;
+
+	ChestWidgetRef = CreateWidget<UChestActorWidget>(this, WidgetToShow);
+	ChestWidgetRef->AddToViewport();
+	ChestWidgetRef->SetFocus();
+	ChestWidgetRef->SetItemInfo(PlayerIn->GetInventoryComp(), ContainerInventory);
+	ChestWidgetRef->SetPlayerController(this);
+	
+}
+
+void ARepPlayerController::RemoveContainer()
+{
+	if (ChestWidgetRef)
+	{
+		ChestWidgetRef->RemoveFromParent();
+		ChestWidgetRef = nullptr;
+	}
+
+	SetShowMouseCursor(false);
+	OwningPlayer->SetCanMove(true);
+	bCanLook = true;
+}
+
 void ARepPlayerController::Server_DealWithWriteableChest_Implementation(AWriteableChestActor* ChestIn)
 {
-	ChestActorRef = ChestIn;
+	WriteableChestActorRef = ChestIn;
 }
 
 void ARepPlayerController::Server_DealWithChestWidgetClosed_Implementation(const FText& TextIn)
@@ -191,5 +256,5 @@ void ARepPlayerController::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>&
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
-	DOREPLIFETIME(ARepPlayerController, ChestActorRef);
+	DOREPLIFETIME(ARepPlayerController, WriteableChestActorRef);
 }
