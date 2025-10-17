@@ -211,22 +211,25 @@ void ARepPlayerController::DealWithEscapeButtonPress()
 
 void ARepPlayerController::ShowContainer(TSubclassOf<UUserWidget> WidgetToShow, UInventoryComp* ContainerInventory, AReplicationTestCharacter* PlayerIn)
 {
-	// Check if the player widget is on screen.  Remove it if it is.
-	if (bInventoryOnScreen)
+	// Check that a container widget isn't already on screen.  Since the player can't move or look when in a widget, it will have to be the same one being implemented.
+	if (!ChestWidgetRef)
 	{
-		ToggleInventory();
-	}
+		// Check if the player widget is on screen.  Remove it if it is.
+		if (bInventoryOnScreen)
+		{
+			ToggleInventory();
+		}
 	
-	SetShowMouseCursor(true);
-	OwningPlayer->SetCanMove(false);
-	bCanLook = false;
+		SetShowMouseCursor(true);
+		OwningPlayer->SetCanMove(false);
+		bCanLook = false;
 
-	ChestWidgetRef = CreateWidget<UChestActorWidget>(this, WidgetToShow);
-	ChestWidgetRef->AddToViewport();
-	ChestWidgetRef->SetFocus();
-	ChestWidgetRef->SetItemInfo(PlayerIn->GetInventoryComp(), ContainerInventory);
-	ChestWidgetRef->SetPlayerController(this);
-	
+		ChestWidgetRef = CreateWidget<UChestActorWidget>(this, WidgetToShow);
+		ChestWidgetRef->AddToViewport();
+		ChestWidgetRef->SetFocus();
+		ChestWidgetRef->SetItemInfo(PlayerIn->GetInventoryComp(), ContainerInventory);
+		ChestWidgetRef->SetPlayerController(this);
+	}
 }
 
 void ARepPlayerController::RemoveContainer()

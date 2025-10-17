@@ -276,11 +276,18 @@ void UInventoryComp::TransferSlots(int32 SourceIndex, UInventoryComp* SourceInve
 				// They are different, swap them
 				SourceInventory->SetItemArray(InventoryContent[DestinationIndex], SourceIndex);
 				InventoryContent[DestinationIndex] = CurrentItem;
-				// Update the inventory on screen
-				UpdateInventory();
+
+				PrepareInventoryUpdate();
 			}
 		}
 	}
+}
+
+void UInventoryComp::PrepareInventoryUpdate()
+{
+	// After a small delay to allow for the inventory to be updated on the server, update the inventory on screen
+	FTimerHandle DelayTimer;
+    GetWorld()->GetTimerManager().SetTimer(DelayTimer, this, &UInventoryComp::UpdateInventory, 0.1f, false, 0.1f);
 }
 
 void UInventoryComp::OnLocalInteract_Implementation(AActor* TargetActor, AReplicationTestCharacter* InteractingChar)
@@ -293,7 +300,7 @@ void UInventoryComp::SetItemArray(FItemStruct ItemStruct, int32 ItemIndex)
 {
 	InventoryContent[ItemIndex] = ItemStruct;
 	// Update the inventory on screen
-	UpdateInventory();
+	PrepareInventoryUpdate();
 }
 
 

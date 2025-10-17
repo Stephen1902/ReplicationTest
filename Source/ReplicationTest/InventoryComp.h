@@ -72,6 +72,9 @@ public:
 	FOnInventoryUpdated OnInventoryUpdated;
 
 	const UDataTable* GetDataTable() const { return DataTableRowHandle.DataTable; }
+
+	UFUNCTION(Server, Reliable)
+	void Server_TransferSlot(int32 SourceIndex, UInventoryComp* SourceInventory, int32 DestinationIndex);
 private:
 	void TraceForInteractive();
 
@@ -80,9 +83,6 @@ private:
 
 	UFUNCTION(Server, Reliable)
 	void Server_DealWithInteract(AActor* ActorToInteractWith, AReplicationTestCharacter* CharacterInteracting);
-
-	UFUNCTION(Server, Reliable)
-	void Server_TransferSlot(int32 SourceIndex, UInventoryComp* SourceInventory, int32 DestinationIndex);
 
 	bool FindSlot(FName ItemID, int32& FoundSlot);
 	int32 GetMaxStackSize(FName ItemID);
@@ -94,4 +94,6 @@ private:
 
 	UFUNCTION(Client, Reliable)
 	void OnLocalInteract(AActor* TargetActor, AReplicationTestCharacter* InteractingChar);
+
+	void PrepareInventoryUpdate();
 };

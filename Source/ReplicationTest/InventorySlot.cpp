@@ -86,7 +86,7 @@ bool UInventorySlot::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEv
 		// Check that the indexes are different or the inventory components are different
 		if (LocalOperation->GetItemIndex() != ItemIndex || LocalOperation->GetInventoryComp() != InventoryComp)
 		{
-			InventoryComp->Server_TransferSlot_Implementation(LocalOperation->GetItemIndex(), LocalOperation->GetInventoryComp(), ItemIndex);
+			InventoryComp->Server_TransferSlot(LocalOperation->GetItemIndex(), LocalOperation->GetInventoryComp(), ItemIndex);
 			return true;
 		}
 	}
