@@ -2,6 +2,7 @@
 
 #include "InventorySlot.h"
 
+#include "ActionMenuWidget.h"
 #include "DD_Operation.h"
 #include "DragDropWidget.h"
 #include "Components/Image.h"
@@ -47,16 +48,42 @@ void UInventorySlot::SetItemInfo(FName ItemIDIn, int32 QuantityIn, int32 IndexIn
 	}
 }
 
+void UInventorySlot::RemoveActionMenu()
+{
+	if (ActionMenuRef)
+	{
+		ActionMenuRef->RemoveFromParent();
+		ActionMenuRef = nullptr;
+	}
+}
+
 FReply UInventorySlot::NativeOnPreviewMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
 {
 	Super::NativeOnMouseButtonDown(InGeometry, InMouseEvent);
 
-	// Make sure that the ItemId is valid (not blank) and that it is the left mouse button being pressed.
-	if (ItemID != "" && UKismetInputLibrary::PointerEvent_IsMouseButtonDown(InMouseEvent, EKeys::LeftMouseButton))
+	// Make sure that the ItemId is valid, not blank)
+	if (ItemID != "")
 	{
-		return UWidgetBlueprintLibrary::DetectDragIfPressed(InMouseEvent, this, EKeys::LeftMouseButton).NativeReply;
+		// Check if it's the left mouse button being pressed
+		if (UKismetInputLibrary::PointerEvent_IsMouseButtonDown(InMouseEvent, EKeys::LeftMouseButton))
+		{
+			return UWidgetBlueprintLibrary::DetectDragIfPressed(InMouseEvent, this, EKeys::LeftMouseButton).NativeReply;
+		}
+
+		// It's not the left mouse button, check the right mouse button
+        if (UKismetInputLibrary::PointerEvent_IsMouseButtonDown(InMouseEvent, EKeys::RightMouseButton) && ActionMenuWidget)
+        {
+        	// Check if an action menu is already on screen, remove it if it is
+        	RemoveActionMenu();
+        
+        	ActionMenuRef = CreateWidget<UActionMenuWidget>(GetWorld(), ActionMenuWidget);
+        	ActionMenuRef->SetItemInfo(InventoryComp, ItemIndex, this);
+        	ActionMenuRef->AddToViewport();
+
+        	return FReply::Handled();
+        }
 	}
-		
+	
 	return FReply::Unhandled();
 }
 

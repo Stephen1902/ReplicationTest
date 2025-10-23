@@ -55,6 +55,9 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Inventory Slot")
 	TSubclassOf<class UDragDropWidget> DragDropWidget;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Inventory Slot")
+	TSubclassOf<class UActionMenuWidget> ActionMenuWidget;
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Inventory Slot")
 	FName ItemID;
@@ -72,9 +75,14 @@ public:
 	void SetInventoryInfo(UInventoryComp* InventoryCompIn);
 	void SetItemInfo(FName ItemIDIn, int32 QuantityIn, int32 IndexIn);
 
+	void RemoveActionMenu();
+
 private:
 	UPROPERTY()
 	FDataTableRowHandle DataTableRowHandle;
+
+	UPROPERTY()
+	UActionMenuWidget* ActionMenuRef;
 
 	virtual FReply NativeOnPreviewMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
 	virtual void NativeOnDragDetected( const FGeometry& InGeometry, const FPointerEvent& InMouseEvent, UDragDropOperation*& OutOperation ) override;
