@@ -251,7 +251,6 @@ void UInventoryComp::Server_DealWithInteract_Implementation(AActor* ActorToInter
 	}
 }
 
-
 void UInventoryComp::TransferSlots(int32 SourceIndex, UInventoryComp* SourceInventory, int32 DestinationIndex)
 {
 	if (SourceInventory)
@@ -269,7 +268,29 @@ void UInventoryComp::TransferSlots(int32 SourceIndex, UInventoryComp* SourceInve
 			// Check if the current item is the same as the destination item
 			if (CurrentItem.ItemID == InventoryContent[DestinationIndex].ItemID)
 			{
+				//  It is.  Add as many as possible to the stack, leaving behind the rest.
+				FItemStruct LocalDestination = InventoryContent[DestinationIndex];
+				// Add the total being transferred to the amount already in place
+				const int32 CombinedItems = CurrentItem.Quantity + LocalDestination.Quantity;
+				// Get the remaining amount left over from the max stack size
+				const int32 RemainingStack = FMath::Clamp(CombinedItems - GetMaxStackSize(CurrentItem.ItemID), 0, GetMaxStackSize(CurrentItem.ItemID));
+
+				// Set the destination item, clamped to the max value of the stack
+				LocalDestination.Quantity = FMath::Clamp(CombinedItems, 0, GetMaxStackSize(CurrentItem.ItemID));
+				SetItemArray(LocalDestination, DestinationIndex);
 				
+				// Check if there is a remainder to be left behind
+				if (RemainingStack > 0)
+				{
+					CurrentItem.Quantity = RemainingStack;
+				}
+				else
+				{
+					CurrentItem.ItemID = "";
+				}
+
+				SourceInventory->SetItemArray(CurrentItem, SourceIndex);
+				PrepareInventoryUpdate();
 			}
 			else
 			{
