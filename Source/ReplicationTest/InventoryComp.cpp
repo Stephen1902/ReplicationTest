@@ -5,6 +5,7 @@
 #include "ReplicationTestCharacter.h"
 #include "WorldObjects.h"
 #include "Kismet/GameplayStatics.h"
+#include "Kismet/KismetMathLibrary.h"
 #include "Net/UnrealNetwork.h"
 
 // Sets default values for this component's properties
@@ -103,11 +104,72 @@ bool UInventoryComp::AddToInventory(FName ItemIDIn, int32 QuantityIn)
 	return bHasFailed;
 }
 
-void UInventoryComp::RemoveFromInventory()
+void UInventoryComp::RemoveFromInventory(int32 ItemIndexIn, bool RemoveAllIn, bool IsConsumedIn)
 {
-	
-	
+	const FName LocalItemID = InventoryContent[ItemIndexIn].ItemID;
+	const int32 LocalQuantity = InventoryContent[ItemIndexIn].Quantity;
 
+	FItemStruct NewStruct = InventoryContent[ItemIndexIn];
+	
+	// Check if all are being removed or if there is only 1 in the inventory to start with.
+	if (RemoveAllIn || LocalQuantity == 1)
+	{
+		NewStruct.ItemID = "";
+		NewStruct.Quantity = 0;
+
+		// Check if the item is consumed (ie food) and not to be dropped into the world
+		if (IsConsumedIn)
+		{
+			
+		}
+		else
+		{
+			Server_SpawnItemInWorld(LocalItemID, LocalQuantity);
+		}
+	}
+	else
+	{
+		// There is just one to be removed.
+		NewStruct.Quantity -= 1;
+		SetItemArray(NewStruct, ItemIndexIn);
+
+		// Check if the item is consumed (ie food) and not to be dropped into the world
+		if (IsConsumedIn)
+		{
+			
+		}
+		else
+		{
+			Server_SpawnItemInWorld(LocalItemID, 1);
+		}
+	}
+
+	SetItemArray(NewStruct, ItemIndexIn);
+	PrepareInventoryUpdate();
+}
+
+void UInventoryComp::Server_SpawnItemInWorld_Implementation(FName ItemID, int32 Quantity)
+{
+	for (int32 i = 0; i < Quantity; ++i)
+	{
+		if (const FWorldItemStruct* ItemStruct = DataTableRowHandle.DataTable->FindRow<FWorldItemStruct>(ItemID, ""))
+		{
+			const FVector RandomDropLoc = UKismetMathLibrary::RandomUnitVectorInConeInDegrees(GetOwner()->GetActorForwardVector(), 30.f) * 150.f;
+			FVector StartLoc = GetOwner()->GetActorLocation() + RandomDropLoc;
+			FVector EndLoc = StartLoc;
+			EndLoc.Z -= 500.f;
+			FHitResult HitResult;
+			TArray<AActor*> ActorsToIgnore;
+			ActorsToIgnore.Add(GetOwner());
+			
+			if (UKismetSystemLibrary::LineTraceSingle(GetWorld(), StartLoc, EndLoc, TraceTypeQuery1, false, ActorsToIgnore, EDrawDebugTrace::None, HitResult, true))
+			{
+				FActorSpawnParameters SpawnParameters;
+				SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
+				GetWorld()->SpawnActor<AActor>(ItemStruct->ActorToSpawn, HitResult.Location, FRotator::ZeroRotator, SpawnParameters);
+			}	
+		}
+	}
 }
 
 void UInventoryComp::SetArraySize(const int32 NumElements)
@@ -121,6 +183,11 @@ void UInventoryComp::DealWithInteract(AReplicationTestCharacter* CharacterIntera
 	{
 		Server_DealWithInteract(ActorBeenHit, CharacterInteracting);
 	}
+}
+
+void UInventoryComp::Server_Remove_Implementation(int32 ItemIndexIn, bool RemoveAllIn, bool IsConsumedIn)
+{
+	RemoveFromInventory(ItemIndexIn, RemoveAllIn, IsConsumedIn);
 }
 
 void UInventoryComp::TraceForInteractive()

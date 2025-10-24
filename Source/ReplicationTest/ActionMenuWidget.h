@@ -49,4 +49,11 @@ private:
 	UInventorySlot* InventorySlot;
 	
 	int32 ItemIndex;
+
+	UFUNCTION()
+	void OnUseClicked();
+	UFUNCTION()
+	void OnDropOneClicked();
+	UFUNCTION()
+	void OnDropAllClicked();
 };

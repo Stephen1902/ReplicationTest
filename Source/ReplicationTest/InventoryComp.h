@@ -56,7 +56,6 @@ protected:
 
 public:
 	bool AddToInventory(FName ItemIDIn, int32 QuantityIn);
-	void RemoveFromInventory();
 
 	void SetArraySize(const int32 NumElements);
 	
@@ -75,6 +74,9 @@ public:
 
 	UFUNCTION(Server, Reliable)
 	void Server_TransferSlot(int32 SourceIndex, UInventoryComp* SourceInventory, int32 DestinationIndex);
+	
+	UFUNCTION(Server, Reliable)
+	void Server_Remove(int32 ItemIndexIn, bool RemoveAllIn, bool IsConsumedIn);
 private:
 	void TraceForInteractive();
 
@@ -94,6 +96,10 @@ private:
 
 	UFUNCTION(Client, Reliable)
 	void OnLocalInteract(AActor* TargetActor, AReplicationTestCharacter* InteractingChar);
+
+	void RemoveFromInventory(int32 ItemIndexIn, bool RemoveAllIn, bool IsConsumedIn);
+	UFUNCTION(Server, Reliable)
+	void Server_SpawnItemInWorld(FName ItemID, int32 Quantity);
 
 	void PrepareInventoryUpdate();
 };
