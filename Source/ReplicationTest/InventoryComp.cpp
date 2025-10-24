@@ -1,6 +1,8 @@
 // Copyright 2025 DME Games
 
 #include "InventoryComp.h"
+
+#include "DisplayActionWidget.h"
 #include "ItemComponent.h"
 #include "ReplicationTestCharacter.h"
 #include "WorldObjects.h"
@@ -21,6 +23,12 @@ UInventoryComp::UInventoryComp()
 		DataTableRowHandle.DataTable = ItemDT.Object;
 	}
 
+	ConstructorHelpers::FClassFinder<UDisplayActionWidget> DAW(TEXT("/Game/FirstPersonCPP/Blueprints/UI/WBP_DisplayAction"));
+	if (DAW.Succeeded())
+	{
+		ActionPopUpWidget = DAW.Class;
+	}
+	
 	InventorySize = 16;
 	TraceDistance = 500.f;
 	ActorBeenHit = nullptr;
@@ -45,6 +53,12 @@ void UInventoryComp::BeginPlay()
 	{
 		InventoryContent[i].Quantity = 0;
 	}*/
+
+	if (ActionPopUpWidget)
+	{
+		DisplayActionWidgetRef = CreateWidget<UDisplayActionWidget>(GetWorld(), ActionPopUpWidget);
+		DisplayActionWidgetRef->AddToViewport();
+	}
 }
 
 void UInventoryComp::TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
@@ -208,7 +222,10 @@ void UInventoryComp::TraceForInteractive()
 		{
 			ActorBeenHit = HitResult.GetActor();
 			FText TextToDisplay = Execute_OnActorViewed(ActorBeenHit);
-			GEngine->AddOnScreenDebugMessage(0, 2.0f, FColor::Green, TextToDisplay.ToString());
+			if (DisplayActionWidgetRef)
+			{
+				DisplayActionWidgetRef->SetItemText(TextToDisplay);
+			}
 		}
 	}
 	else
@@ -216,6 +233,10 @@ void UInventoryComp::TraceForInteractive()
 	{
 		if (ActorBeenHit != nullptr)
 		{
+			if (DisplayActionWidgetRef)
+			{
+				DisplayActionWidgetRef->SetItemText(FText::FromString(""));
+			}
 			Execute_OnActorViewLost(ActorBeenHit);
 			ActorBeenHit = nullptr;
 		}

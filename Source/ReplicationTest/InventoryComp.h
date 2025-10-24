@@ -13,6 +13,8 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnInventoryUpdated);
 
 #define COLLISION_INTERACTIVE	ECC_GameTraceChannel2
 
+class UDisplayActionWidget;
+
 USTRUCT(BlueprintType)
 struct FItemStruct
 {
@@ -54,6 +56,8 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Item Data")
 	FDataTableRowHandle DataTableRowHandle;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Inventory Component")
+	TSubclassOf<UDisplayActionWidget> ActionPopUpWidget;
 public:
 	bool AddToInventory(FName ItemIDIn, int32 QuantityIn);
 
@@ -102,4 +106,7 @@ private:
 	void Server_SpawnItemInWorld(FName ItemID, int32 Quantity);
 
 	void PrepareInventoryUpdate();
+
+	UPROPERTY()
+	UDisplayActionWidget* DisplayActionWidgetRef;
 };
