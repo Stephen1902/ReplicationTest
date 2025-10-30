@@ -30,6 +30,22 @@ struct FWorldItemStruct : public FTableRowBase
 	// The maximum that can be held in one inventory slot
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "World Items")
 	int32 ItemMaxStack;
+
+	// Whether or not this item can be consumed by the player or another character in the world
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "World Items")
+	bool bIsConsumable;
+
+	// The amount of food this item changes
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "World Items", meta=(EditCondition="bIsConsumable"))
+	int32 FoodChangeAmount;
+
+	// The amount of water this item changes
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "World Items", meta=(EditCondition="bIsConsumable"))
+	int32 WaterChangeAmount;
+
+	// The amount of health this item changes
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "World Items", meta=(EditCondition="bIsConsumable"))
+	int32 HealthChangeAmount;
 	
 	FWorldItemStruct()
 	{
@@ -38,6 +54,10 @@ struct FWorldItemStruct : public FTableRowBase
 		ActorToSpawn = nullptr;
 		ItemIcon = nullptr;
 		ItemMaxStack = 1;
+		bIsConsumable = false;
+		FoodChangeAmount = 0;
+		WaterChangeAmount = 0;
+		HealthChangeAmount = 0;
 	}
 };
 

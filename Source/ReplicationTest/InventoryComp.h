@@ -102,6 +102,11 @@ private:
 	void OnLocalInteract(AActor* TargetActor, AReplicationTestCharacter* InteractingChar);
 
 	void RemoveFromInventory(int32 ItemIndexIn, bool RemoveAllIn, bool IsConsumedIn);
+
+	void ConsumeItem(int32 ItemIndexIn);
+
+	UFUNCTION(Server, Reliable)
+	void Server_ConsumeItem(FName ItemID);
 	UFUNCTION(Server, Reliable)
 	void Server_SpawnItemInWorld(FName ItemID, int32 Quantity);
 

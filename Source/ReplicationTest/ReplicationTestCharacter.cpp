@@ -9,6 +9,7 @@
 #include "Components/InputComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "PlantActor.h"
+#include "StatsActorComponent.h"
 #include "Net/UnrealNetwork.h"
 
 //////////////////////////////////////////////////////////////////////////
@@ -42,6 +43,7 @@ AReplicationTestCharacter::AReplicationTestCharacter()
 	Mesh1P->SetRelativeLocation(FVector(-0.5f, -4.4f, -155.7f));
 
 	InventoryComp = CreateDefaultSubobject<UInventoryComp>(TEXT("Inventory Component"));
+	StatsComp = CreateDefaultSubobject<UStatsActorComponent>(TEXT("Stats Component"));
 
 	// Create a gun mesh component
 	FP_Gun = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("FP_Gun"));

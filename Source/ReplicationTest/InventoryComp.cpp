@@ -162,6 +162,23 @@ void UInventoryComp::RemoveFromInventory(int32 ItemIndexIn, bool RemoveAllIn, bo
 	PrepareInventoryUpdate();
 }
 
+void UInventoryComp::ConsumeItem(int32 ItemIndexIn)
+{
+	FName LocalItemID = InventoryContent[ItemIndexIn].ItemID;
+	int32 LocalItemQty = InventoryContent[ItemIndexIn].Quantity;
+
+	Server_Remove(ItemIndexIn, false, true);
+}
+
+void UInventoryComp::Server_ConsumeItem_Implementation(FName ItemID)
+{
+	// Check the ItemID isn't empty
+	if (ItemID != "")
+	{
+		
+	}
+}
+
 void UInventoryComp::Server_SpawnItemInWorld_Implementation(FName ItemID, int32 Quantity)
 {
 	for (int32 i = 0; i < Quantity; ++i)
